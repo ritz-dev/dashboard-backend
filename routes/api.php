@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Apis\RoleController;
+use App\Http\Controllers\Apis\PermissionController;
 use Illuminate\Support\Facades\Route;use App\Http\Controllers\Apis\AuthController;
 
 /*
@@ -24,7 +26,11 @@ Route::post('logout', [AuthController::class,'logout']);
 Route::group([
     'middle' => ['auth.admin']
 ], function () {
-    
+
     Route::get('/me',[AuthController::class,'me']);
+
+    Route::resource('/permissions',PermissionController::class);
+
+    Route::resource('/roles',RoleController::class);
 
 });

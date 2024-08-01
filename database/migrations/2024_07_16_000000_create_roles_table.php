@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('administrator_financial_transactions', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->integer('administrator_id')->nullable();
-            $table->decimal('balance',total: 10, places: 2)->nullable();
-            $table->longText('description')->nullable();
+            $table->string('name');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('administrator_financial_transactions');
+        Schema::dropIfExists('roles');
     }
 };

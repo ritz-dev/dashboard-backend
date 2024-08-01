@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\UsersTableSeeder;
-use Database\Seeders\AstrologerTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,16 +12,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        //\App\Models\User::factory(10)->create();
+        // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+        $this->call([
+            RolesSeeder::class,
+            AdminsSeeder::class
+        ]);
 
-        //  $this->call(UsersTableSeeder::class);
-
-        $this->call(AstrologerTableSeeder::class);
-        $this->call(UsersTableSeeder::class);
     }
 }

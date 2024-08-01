@@ -5,14 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Developer extends Model
+class Role extends Model
 {
     use HasFactory;
 
-    protected $table = "developers";
     protected $fillable = [
-        "username",
-        "email",
-        "password"
+        'name', 'description',
     ];
+
+    public function admins()
+    {
+        return $this->hasMany(Admin::class);
+    }
 }

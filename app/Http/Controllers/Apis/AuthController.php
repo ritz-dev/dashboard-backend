@@ -7,95 +7,66 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
+    //
+
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register','refresh','logout']]);
+        $this->middleware('auth:admin', ['except' => ['login','register','refresh','logout']]);
     }
-
-    public function register(Request $request){
-        $request->validate([
-            'full_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
-
-        $user = User::create([
-            'full_name' => $request->full_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $token = Auth::guard('api')->login($user);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User created successfully',
-            'user' => $user,
-            'authorisation' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ]
-        ]);
-    }
-
+    
     public function login(Request $request)
     {
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-        $credentials = $request->only('email', 'password');
-        logger($request->email);
-        logger($request->password);
 
-        $token = Auth::guard('api')->attempt($credentials);
-        logger($token);
-        if (!$token) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 401);
+        $credentials = $request->only('email', 'password');
+
+        try{
+            if(! $token = auth()->guard('admin')->attempt($credentials)) {
+                return response()->json(['error' => 'Unauthorized'],401);
+            }
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Could not create token'],500);
         }
 
         return response()->json([
-                'status' => 'success',
-                'token' => $token,
-                'permissions' => [
-                    'super_admin',
-                ],
-                'role' => 'super_admin'
-            ]);
+            'status' => 'success',
+            'token' => $token,
+            'token_type' => 'bearer',
+            'permissions' => [
+                'super_admin',
+            ],
+            'role' => 'super_admin'
+        ]);
     }
 
     public function logout()
     {
-        Auth::logout();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Successfully logged out',
-        ]);
+        try {
+            auth()->guard('admin')->logout();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully logged out',
+            ]);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Could not log out'], 500);
+        }
     }
 
-    public function me() {
+    public function me () {
+        $admin = auth()->guard('admin')->user();
 
-        $user = Auth::guard('api')->user();
-
-        return response()->json(
-            $user,
-        );
-    }
-
-    public function refresh()
-    {
-        // return response()->json([
-        //     'status' => 'success',
-        //     'user' => Auth::guard('api')->user(),
-        //     'authorisation' => [
-        //         'token' => Auth::guard('api')->refresh(),
-        //         'type' => 'bearer',
-        //     ]
-        // ]);
+        if(!$admin) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        
+        return response()->json($admin);
     }
 }

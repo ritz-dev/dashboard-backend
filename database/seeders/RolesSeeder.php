@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class RolesSeeder extends Seeder
 {
@@ -16,17 +17,8 @@ class RolesSeeder extends Seeder
         //
         Role::create([
             'name' => 'Admin',
+            'slug' => substr(base64_encode(hash('sha256', 'Admin', true)), 0, 10),
             'description' => 'Administrator with full access to the system.',
-        ]);
-
-        Role::create([
-            'name' => 'Editor',
-            'description' => 'Editor with access to modify content.',
-        ]);
-
-        Role::create([
-            'name' => 'Viewer',
-            'description' => 'Viewer with read-only access.',
         ]);
     }
 }

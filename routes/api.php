@@ -29,8 +29,6 @@ Route::group([
 
     Route::get('/me',[AuthController::class,'me']);
 
-    Route::resource('/permissions',PermissionController::class);
-
     Route::resource('/roles',RoleController::class);
 
 });

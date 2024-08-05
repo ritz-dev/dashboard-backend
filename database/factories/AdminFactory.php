@@ -26,7 +26,7 @@ class AdminFactory extends Factory
             'password' => Hash::make('password'), // password encryption
             'phone' => $this->faker->phoneNumber,
             'profile_picture' => $this->faker->imageUrl,
-            'role_id' => \App\Models\Role::factory(), // Create a role using the RoleFactory
+            'role_id' => 1, // Create a role using the RoleFactory
             'remember_token' => \Illuminate\Support\Str::random(10),
         ];
     }

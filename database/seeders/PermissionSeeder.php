@@ -14,12 +14,12 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            ["name" => "user-show"],
-            ["name" => "user-store"],
+            ["name" => "user-create"],
+            ["name" => "user-read"],
             ["name" => "user-update"],
             ["name" => "user-delete"],
-            ["name" => "role-show"],
-            ["name" => "role-store"],
+            ["name" => "role-create"],
+            ["name" => "role-read"],
             ["name" => "role-update"],
             ["name" => "role-delete"],
 

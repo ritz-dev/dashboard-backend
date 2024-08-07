@@ -79,7 +79,6 @@ class RoleController extends Controller
     public function store(Request $request)
     {
 
-
         $validatedData = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
@@ -104,7 +103,8 @@ class RoleController extends Controller
 
             $role = Role::firstOrCreate([
                 'name' => $roleName,
-                'description' => $roleDescription
+                'description' => $roleDescription,
+                'slug' => substr(base64_encode(hash('sha256', $roleName, true)), 0, 12),
             ]);
 
             $permissions = collect($permissionsArray)->map(function ($permissionName) {
@@ -167,7 +167,7 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $slug)
+    public function update(Request $request, string $id)
     {
         $validatedData = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -186,9 +186,7 @@ class RoleController extends Controller
         try {
             DB::beginTransaction();
     
-            // $role = Role::findOrFail($id);
-
-            $role = Role::where('slug', $slug)->firstOrFail();
+            $role = Role::findOrFail($id);
     
             $role->name = $request->input('name');
             $role->description = $request->input('description');
@@ -223,6 +221,32 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $role = Role::findOrFail($id);
+
+            DB::beginTransaction();
+
+            // Detach all permissions associated with the role
+            $role->permissions()->detach();
+
+            $role->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Role deleted successfully.',
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting role: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while deleting the role.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

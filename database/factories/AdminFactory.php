@@ -27,6 +27,7 @@ class AdminFactory extends Factory
             'phone' => $this->faker->phoneNumber,
             'profile_picture' => $this->faker->imageUrl,
             'role_id' => 1, // Create a role using the RoleFactory
+            'is_active' => true,
             'remember_token' => \Illuminate\Support\Str::random(10),
         ];
     }

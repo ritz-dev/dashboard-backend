@@ -22,6 +22,7 @@ class AdminsSeeder extends Seeder
             'password' => Hash::make('superpassword'), // Use a secure password
             'phone' => '1234567890',
             'profile_picture' => null,
+            'is_active' => true,
             'role_id' => 1, // Assuming the role_id 1 is for 'Admin' role
             'remember_token' => \Illuminate\Support\Str::random(10),
         ]);

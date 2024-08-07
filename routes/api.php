@@ -1,9 +1,10 @@
 <?php
 
+use App\Http\Controllers\Apis\AdminController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Apis\RoleController;
-use App\Http\Controllers\Apis\PermissionController;
-use Illuminate\Support\Facades\Route;use App\Http\Controllers\Apis\AuthController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Apis\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,5 +31,7 @@ Route::group([
     Route::get('/me',[AuthController::class,'me']);
 
     Route::resource('/roles',RoleController::class);
+
+    Route::resource('/users',AdminController::class);
 
 });
